@@ -61,7 +61,9 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
-	s := selector.New(cfg.Selector, nil)
+	t := selector.TypeFromStr(cfg.Selector)
+	s := selector.New(t, nil)
+
 	result, err := s.Run(outputChan)
 
 	// An empty result indicates that the selector was canceled.
