@@ -24,15 +24,17 @@ func Run(cfg *config.Config) error {
 	// Channel to receive output (string) from the finder.
 	//
 	// This channel is also passed to the selector to populate its input.
-	outputChan := make(chan string)
+	resultCh := make(chan string, 3)
 
 	measureStart := time.Now()
 	buf := bytes.NewBufferString("")
 
 	go finder.Run(&finder.FinderOpts{
-		Sources:    cfg.Sources,
-		OutputChan: outputChan,
-		HomeDir:    home,
+		ResultCh: resultCh,
+		HomeDir:  home,
+		Sources:  cfg.Sources,
+		SortType: finder.SortTypeFromStr(cfg.Sort),
+		Unique:   true,
 	})
 
 	// If output expansion is not enabled, set the home directory to "~".
@@ -46,7 +48,7 @@ func Run(cfg *config.Config) error {
 	if cfg.Measure {
 		var count int
 
-		for range outputChan {
+		for range resultCh {
 			count++
 		}
 
@@ -68,7 +70,7 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
-	result, err := s.Run(outputChan)
+	result, err := s.Run(resultCh)
 
 	// An empty result indicates that the selector was canceled.
 	if err != nil || result == "" {

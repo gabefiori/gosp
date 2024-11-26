@@ -22,13 +22,21 @@ type Config struct {
 
 	// Selector for displaying the projects
 	Selector string `json:"selector"`
+
+	// Flag to display only unique results.
+	Unique bool `json:"unique"`
+
+	// Type of sorting.
+	Sort string `json:"sort"`
 }
 
 type LoadParams struct {
-	Path         string
-	Measure      bool
-	ExpandOutput *bool
 	Selector     string
+	Sort         string
+	Path         string
+	ExpandOutput *bool
+	Unique       *bool
+	Measure      bool
 }
 
 // Load reads the configuration from a JSON file at the specified path.
@@ -63,8 +71,16 @@ func Load(params *LoadParams) (*Config, error) {
 		cfg.ExpandOutput = *params.ExpandOutput
 	}
 
+	if params.Unique != nil {
+		cfg.Unique = *params.Unique
+	}
+
 	if params.Selector != "" {
 		cfg.Selector = params.Selector
+	}
+
+	if params.Sort != "" {
+		cfg.Sort = params.Sort
 	}
 
 	if cfg.Selector == "" {

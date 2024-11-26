@@ -65,6 +65,9 @@ Create a configuration file at `~/.config/gosp/config.json`:
 {
   "expand_output": true,
   "selector": "fzf",
+  "unique": true,
+  "sort": "sort",
+
   "sources": [
     {
       "path": "~/your/path",
@@ -78,14 +81,49 @@ Create a configuration file at `~/.config/gosp/config.json`:
 }
 ```
 
-> - `"expand_output"` is optional and defaults to `true`.
-> - `"selector"` is optional and defaults to `fzf`. Available options are `fzf` and `fzy`.
+<details>
+<summary>sources</summary>
 
-## CLI Options
-```sh
---config file, -c file      Load configuration from file (default: "~/.config/gosp/config.json")
---selector value, -s value  Selector for displaying the projects (available: "fzf", "fzy") (default: "fzf")
---expand-output, --eo       Expand output (default: true)
---measure, -m               Measure performance (time taken and number of items) (default: false)
---help, -h                  show help
-```
+>  An array of source objects that specify the paths to search and their respective depth levels.
+>
+> Each source object should contain:
+> - **`path`**: The directory path to search.
+> - **`depth`**: The depth level for searching within the specified path.
+
+</details>
+
+<details>
+<summary>expand_output (optional, defaults to `true`)</summary>
+
+> Determines whether the output should be expanded to show additional details. Set to `false` to display only the basic information.
+
+</details>
+
+<details>
+<summary>selector (optional, defaults to `fzf`)</summary>
+
+> Specifies the tool used for displaying projects. Available options are:
+> - `fzf`: A command-line fuzzy finder.
+> - `fzy`: A faster alternative to `fzf`.
+
+</details>
+
+<details>
+<summary>unique (optional, defaults to `false`)</summary>
+
+> When set to `true`, the output will only display unique values. Note that enabling this option may slightly impact performance.
+
+</details>
+
+<details>
+<summary>sort (optional, defaults to ``)</summary>
+
+> Defines the order in which the output is sorted. Available options are:
+> - `asc`: Sorts the output in ascending order.
+> - `desc`: Sorts the output in descending order.
+>
+> Enabling sorting may also have a slight impact on performance.
+
+</details>
+
+For CLI options, run `gosp --help`.

@@ -7,9 +7,11 @@ import (
 )
 
 type FinderOpts struct {
-	Sources    []Source
-	OutputChan chan string
-	HomeDir    string
+	Sources  []Source
+	HomeDir  string
+	ResultCh chan string
+	SortType SortType
+	Unique   bool
 }
 
 // Run executes the package finder using the provided options.
@@ -18,6 +20,15 @@ type FinderOpts struct {
 // Each source runs its [Find] method in a separate goroutine.
 func Run(opts *FinderOpts) {
 	var wg sync.WaitGroup
+	var pipeCh chan string
+
+	ch := opts.ResultCh
+	useMid := opts.SortType != NoSort || opts.Unique
+
+	if useMid {
+		pipeCh = make(chan string, cap(opts.ResultCh))
+		ch = pipeCh
+	}
 
 	for _, source := range opts.Sources {
 		wg.Add(1)
@@ -25,7 +36,7 @@ func Run(opts *FinderOpts) {
 		go func(s Source) {
 			defer wg.Done()
 
-			err := s.Find(opts.OutputChan, func(p string) string {
+			err := s.Find(ch, func(p string) string {
 				return "~" + strings.TrimPrefix(p, opts.HomeDir)
 			})
 
@@ -36,6 +47,40 @@ func Run(opts *FinderOpts) {
 		}(source)
 	}
 
+	if !useMid {
+		wg.Wait()
+		close(opts.ResultCh)
+
+		return
+	}
+
+	go func() {
+		defer close(opts.ResultCh)
+
+		unique := make(map[string]struct{})
+		results := make([]string, 0, 50)
+
+		for r := range pipeCh {
+			if opts.Unique {
+				if _, exists := unique[r]; exists {
+					continue
+				}
+
+				unique[r] = struct{}{}
+			}
+
+			results = append(results, r)
+		}
+
+		if opts.SortType != NoSort {
+			sortResults(results, opts.SortType)
+		}
+
+		for _, r := range results {
+			opts.ResultCh <- r
+		}
+	}()
+
 	wg.Wait()
-	close(opts.OutputChan)
+	close(pipeCh)
 }

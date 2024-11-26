@@ -13,9 +13,11 @@ import (
 func Run() error {
 	var (
 		path         string
+		selector     string
+		sort         string
 		expandOutput bool
 		measure      bool
-		selector     string
+		unique       bool
 	)
 
 	app := &cli.App{
@@ -36,22 +38,36 @@ func Run() error {
 			},
 			&cli.StringFlag{
 				Name:        "selector",
-				Aliases:     []string{"s"},
-				Usage:       "Selector for displaying the projects (available: \"fzf\", \"fzy\")",
+				Aliases:     []string{"sl"},
+				Usage:       "Selector for displaying projects (available options: 'fzf', 'fzy')",
 				Value:       "fzf",
 				Destination: &selector,
+			},
+			&cli.StringFlag{
+				Name:        "sort",
+				Aliases:     []string{"s"},
+				Usage:       "Specify the sort order (available options: 'asc', 'desc')",
+				Value:       "",
+				Destination: &sort,
+			},
+			&cli.BoolFlag{
+				Name:        "unique",
+				Aliases:     []string{"u"},
+				Usage:       "Display only unique values",
+				Value:       false,
+				Destination: &unique,
 			},
 			&cli.BoolFlag{
 				Name:        "expand-output",
 				Aliases:     []string{"eo"},
-				Usage:       "Expand output",
+				Usage:       "Expand the output",
 				Value:       true,
 				Destination: &expandOutput,
 			},
 			&cli.BoolFlag{
 				Name:        "measure",
 				Aliases:     []string{"m"},
-				Usage:       "Measure performance (time taken and number of items)",
+				Usage:       "Measure performance (time taken and number of items processed)",
 				Value:       false,
 				Destination: &measure,
 			},
@@ -69,6 +85,14 @@ func Run() error {
 
 			if ctx.IsSet("selector") {
 				params.Selector = selector
+			}
+
+			if ctx.IsSet("sort") {
+				params.Sort = sort
+			}
+
+			if ctx.IsSet("unique") {
+				params.Unique = &unique
 			}
 
 			cfg, err := config.Load(params)

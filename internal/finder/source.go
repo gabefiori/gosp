@@ -24,7 +24,7 @@ type Source struct {
 }
 
 // Find initiates the search based on the specified depth and format function.
-func (s *Source) Find(outputChan chan<- string, formatFn func(string) string) error {
+func (s *Source) Find(resultCh chan<- string, formatFn func(string) string) error {
 	if formatFn == nil {
 		return ErrInvalidFormatFn
 	}
@@ -43,17 +43,17 @@ func (s *Source) Find(outputChan chan<- string, formatFn func(string) string) er
 	// Fastwalk is generally faster for deep directory structures,
 	// but for shallow searches, using just [os.ReadDir] or [os.Stat] is more efficient.
 	if s.Depth == 0 {
-		return s.depthZero(outputChan)
+		return s.depthZero(resultCh)
 	}
 
 	if s.Depth == 1 {
-		return s.depthOne(outputChan)
+		return s.depthOne(resultCh)
 	}
 
-	return s.depthGreater(outputChan)
+	return s.depthGreater(resultCh)
 }
 
-func (s *Source) depthZero(outputChan chan<- string) error {
+func (s *Source) depthZero(resultCh chan<- string) error {
 	isDir, err := isPathDir(s.Path)
 
 	if err != nil {
@@ -61,18 +61,18 @@ func (s *Source) depthZero(outputChan chan<- string) error {
 	}
 
 	if isDir {
-		outputChan <- s.formatFn(s.Path)
+		resultCh <- s.formatFn(s.Path)
 	}
 	return nil
 }
 
-func (s *Source) depthOne(outputChan chan<- string) error {
+func (s *Source) depthOne(resultCh chan<- string) error {
 	entries, err := os.ReadDir(s.Path)
 	if err != nil {
 		return err
 	}
 
-	outputChan <- s.formatFn(s.Path)
+	resultCh <- s.formatFn(s.Path)
 
 	for _, entry := range entries {
 		path := filepath.Join(s.Path, entry.Name())
@@ -83,13 +83,13 @@ func (s *Source) depthOne(outputChan chan<- string) error {
 		}
 
 		if isDir {
-			outputChan <- s.formatFn(path)
+			resultCh <- s.formatFn(path)
 		}
 	}
 	return nil
 }
 
-func (s *Source) depthGreater(outputChan chan<- string) error {
+func (s *Source) depthGreater(resultCh chan<- string) error {
 	walkFn := func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return nil
@@ -99,7 +99,7 @@ func (s *Source) depthGreater(outputChan chan<- string) error {
 			return fs.SkipDir
 		}
 
-		outputChan <- s.formatFn(path)
+		resultCh <- s.formatFn(path)
 		return nil
 	}
 

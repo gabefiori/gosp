@@ -62,11 +62,11 @@ func TestFind(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			source := Source{Path: tempDir, Depth: tt.depth}
-			outputChan := make(chan string)
+			resultCh := make(chan string)
 
 			go func() {
-				defer close(outputChan)
-				err := source.Find(outputChan, func(s string) string {
+				defer close(resultCh)
+				err := source.Find(resultCh, func(s string) string {
 					return s
 				})
 
@@ -75,7 +75,7 @@ func TestFind(t *testing.T) {
 
 			var paths []string
 
-			for path := range outputChan {
+			for path := range resultCh {
 				paths = append(paths, path)
 			}
 

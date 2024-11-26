@@ -9,7 +9,7 @@ import (
 // For more information, see:
 // https://junegunn.github.io/fzf/tips/using-fzf-in-your-program/
 type Fzf struct {
-	outputChan chan string
+	resultCh   chan string
 	resultChan chan string
 
 	options *fzf.Options
@@ -30,7 +30,7 @@ type Fzf struct {
 func NewFzf(args []string) (Selector, error) {
 	f := &Fzf{
 		args:       args,
-		outputChan: make(chan string),
+		resultCh:   make(chan string),
 		resultChan: make(chan string),
 	}
 
@@ -40,7 +40,7 @@ func NewFzf(args []string) (Selector, error) {
 		return nil, err
 	}
 
-	options.Output = f.outputChan
+	options.Output = f.resultCh
 	f.options = options
 
 	return f, nil
@@ -48,7 +48,7 @@ func NewFzf(args []string) (Selector, error) {
 
 func (f *Fzf) Run(inputChan chan string) (string, error) {
 	go func() {
-		for out := range f.outputChan {
+		for out := range f.resultCh {
 			f.resultChan <- out
 		}
 
@@ -59,7 +59,7 @@ func (f *Fzf) Run(inputChan chan string) (string, error) {
 
 	_, err := fzf.Run(f.options)
 
-	close(f.outputChan)
+	close(f.resultCh)
 
 	if err != nil {
 		return "", err
