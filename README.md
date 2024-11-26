@@ -66,7 +66,7 @@ Create a configuration file at `~/.config/gosp/config.json`:
   "expand_output": true,
   "selector": "fzf",
   "unique": true,
-  "sort": "sort",
+  "sort": "asc",
 
   "sources": [
     {
@@ -93,14 +93,14 @@ Create a configuration file at `~/.config/gosp/config.json`:
 </details>
 
 <details>
-<summary>expand_output (optional, defaults to `true`)</summary>
+<summary>expand_output (optional, defaults to "true")</summary>
 
 > Determines whether the output should be expanded to show additional details. Set to `false` to display only the basic information.
 
 </details>
 
 <details>
-<summary>selector (optional, defaults to `fzf`)</summary>
+<summary>selector (optional, defaults to "fzf")</summary>
 
 > Specifies the tool used for displaying projects. Available options are:
 > - `fzf`: A command-line fuzzy finder.
@@ -109,14 +109,14 @@ Create a configuration file at `~/.config/gosp/config.json`:
 </details>
 
 <details>
-<summary>unique (optional, defaults to `false`)</summary>
+<summary>unique (optional, defaults to "false")</summary>
 
 > When set to `true`, the output will only display unique values. Note that enabling this option may slightly impact performance.
 
 </details>
 
 <details>
-<summary>sort (optional, defaults to ``)</summary>
+<summary>sort (optional, defaults to "")</summary>
 
 > Defines the order in which the output is sorted. Available options are:
 > - `asc`: Sorts the output in ascending order.
