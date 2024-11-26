@@ -9,6 +9,11 @@ import (
 // For more information, see:
 // https://junegunn.github.io/fzf/tips/using-fzf-in-your-program/
 type Fzf struct {
+	outputChan chan string
+	resultChan chan string
+
+	options *fzf.Options
+
 	// Command-line arguments for fzf, passed in the same format as the CLI.
 	//
 	// Example:
@@ -22,40 +27,43 @@ type Fzf struct {
 //
 // Example:
 // []string{"--multi", "--reverse"},
-func NewFzf(args []string) Selector {
-	return &Fzf{
-		args: args,
+func NewFzf(args []string) (Selector, error) {
+	f := &Fzf{
+		args:       args,
+		outputChan: make(chan string),
+		resultChan: make(chan string),
 	}
-}
-
-func (f *Fzf) Run(inputChan chan string) (string, error) {
-	outputChan := make(chan string)
-	resultChan := make(chan string)
-
-	go func() {
-		for out := range outputChan {
-			resultChan <- out
-		}
-
-		close(resultChan)
-	}()
 
 	options, err := fzf.ParseOptions(true, nil)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	options.Input = inputChan
-	options.Output = outputChan
+	options.Output = f.outputChan
+	f.options = options
 
-	_, err = fzf.Run(options)
+	return f, nil
+}
 
-	close(outputChan)
+func (f *Fzf) Run(inputChan chan string) (string, error) {
+	go func() {
+		for out := range f.outputChan {
+			f.resultChan <- out
+		}
+
+		close(f.resultChan)
+	}()
+
+	f.options.Input = inputChan
+
+	_, err := fzf.Run(f.options)
+
+	close(f.outputChan)
 
 	if err != nil {
 		return "", err
 	}
 
-	return <-resultChan, nil
+	return <-f.resultChan, nil
 }

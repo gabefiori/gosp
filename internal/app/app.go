@@ -62,7 +62,11 @@ func Run(cfg *config.Config) error {
 	}
 
 	t := selector.TypeFromStr(cfg.Selector)
-	s := selector.New(t, nil)
+	s, err := selector.New(t, nil)
+
+	if err != nil {
+		return err
+	}
 
 	result, err := s.Run(outputChan)
 
