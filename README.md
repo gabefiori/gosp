@@ -18,7 +18,7 @@ Once the installation is complete, you can use the `gosp` command along with oth
 > Add to your `~/.bashrc` file:
 >
 > ```sh
-> alias fp='cd "$(gosp)"'
+> alias sp='cd "$(gosp)"'
 > ```
 
 </details>
@@ -29,7 +29,7 @@ Once the installation is complete, you can use the `gosp` command along with oth
 > Add to your `~/.zshrc` file:
 >
 > ```sh
-> alias fp='cd "$(gosp)"'
+> alias sp='cd "$(gosp)"'
 > ```
 
 </details>
@@ -40,7 +40,7 @@ Once the installation is complete, you can use the `gosp` command along with oth
 > Add to your `~/config.fish` file:
 >
 > ```fish
-> alias fp "cd (gosp)"
+> alias sp "cd (gosp)"
 > ```
 
 </details>
