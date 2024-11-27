@@ -69,7 +69,7 @@ func Run() error {
 				Name:        "list",
 				Aliases:     []string{"l"},
 				Usage:       "List projects to stdout",
-				Value:       true,
+				Value:       false,
 				Destination: &list,
 			},
 			&cli.BoolFlag{

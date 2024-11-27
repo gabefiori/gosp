@@ -133,7 +133,7 @@ Create a configuration file at `~/.config/gosp/config.json`:
 --sort value, -s value        Specify the sort order (available options: 'asc', 'desc')
 --unique, -u                  Display only unique projects (default: false)
 --expand-output, --eo         Expand the output (default: true)
---list, -l                    List projects to stdout (default: true)
+--list, -l                    List projects to stdout (default: false)
 --measure, -m                 Measure performance (time taken and number of items processed) (default: false)
 --help, -h                    show help
 ```
