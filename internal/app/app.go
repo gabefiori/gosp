@@ -25,9 +25,7 @@ func Run(cfg *config.Config) error {
 	//
 	// This channel is also passed to the selector to populate its input.
 	resultCh := make(chan string, 3)
-
 	measureStart := time.Now()
-	buf := bytes.NewBufferString("")
 
 	go finder.Run(&finder.FinderOpts{
 		ResultCh: resultCh,
@@ -36,6 +34,8 @@ func Run(cfg *config.Config) error {
 		SortType: finder.SortTypeFromStr(cfg.Sort),
 		Unique:   true,
 	})
+
+	buf := new(bytes.Buffer)
 
 	// If output expansion is not enabled, set the home directory to "~".
 	// This is useful for hiding the user's home directory.
