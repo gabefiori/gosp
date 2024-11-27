@@ -84,12 +84,12 @@ func Load(params *LoadParams) (*Config, error) {
 		cfg.Selector = params.Selector
 	}
 
-	if params.Sort != "" {
-		cfg.Sort = params.Sort
-	}
-
 	if cfg.Selector == "" {
 		cfg.Selector = "fzf"
+	}
+
+	if params.Sort != "" {
+		cfg.Sort = params.Sort
 	}
 
 	return &cfg, nil
