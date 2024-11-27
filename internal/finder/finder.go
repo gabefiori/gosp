@@ -23,9 +23,9 @@ func Run(opts *FinderOpts) {
 	var pipeCh chan string
 
 	ch := opts.ResultCh
-	useMid := opts.SortType != NoSort || opts.Unique
+	usePipe := opts.SortType != NoSort || opts.Unique
 
-	if useMid {
+	if usePipe {
 		pipeCh = make(chan string, cap(opts.ResultCh))
 		ch = pipeCh
 	}
@@ -36,8 +36,8 @@ func Run(opts *FinderOpts) {
 		go func(s Source) {
 			defer wg.Done()
 
-			err := s.Find(ch, func(p string) string {
-				return "~" + strings.TrimPrefix(p, opts.HomeDir)
+			err := s.Find(ch, func(s string) string {
+				return "~" + strings.TrimPrefix(s, opts.HomeDir)
 			})
 
 			if err != nil {
@@ -47,7 +47,7 @@ func Run(opts *FinderOpts) {
 		}(source)
 	}
 
-	if !useMid {
+	if !usePipe {
 		wg.Wait()
 		close(opts.ResultCh)
 
