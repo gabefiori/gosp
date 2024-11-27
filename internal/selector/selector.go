@@ -28,19 +28,13 @@ type Selector interface {
 }
 
 // New creates a new Selector instance based on the provided selector type and options.
-func New(t Type, opts any) (Selector, error) {
-	var fzfOptions []string
-
-	if opts != nil {
-		fzfOptions = opts.([]string)
-	}
-
+func New(t Type) (Selector, error) {
 	switch t {
 	case FzfType:
-		return NewFzf(fzfOptions)
+		return NewFzf(nil)
 	case FzyType:
 		return NewFzy(), nil
 	default:
-		return NewFzf(fzfOptions)
+		return NewFzf(nil)
 	}
 }
