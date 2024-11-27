@@ -33,18 +33,17 @@ func Run(opts *FinderOpts) {
 	for _, source := range opts.Sources {
 		wg.Add(1)
 
-		go func(s Source) {
+		go func() {
 			defer wg.Done()
 
-			err := s.Find(ch, func(s string) string {
+			err := source.Find(ch, func(s string) string {
 				return "~" + strings.TrimPrefix(s, opts.HomeDir)
 			})
 
 			if err != nil {
 				log.Fatal(err)
 			}
-
-		}(source)
+		}()
 	}
 
 	if !usePipe {
