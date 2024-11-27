@@ -20,10 +20,13 @@ type Config struct {
 	// Flag to indicate if measurement should be performed
 	Measure bool
 
+	// Flag to list results
+	List bool
+
 	// Selector for displaying the projects
 	Selector string `json:"selector"`
 
-	// Flag to display only unique results.
+	// Flag to display only unique projects.
 	Unique bool `json:"unique"`
 
 	// Type of sorting.
@@ -37,6 +40,7 @@ type LoadParams struct {
 	ExpandOutput *bool
 	Unique       *bool
 	Measure      bool
+	List         bool
 }
 
 // Load reads the configuration from a JSON file at the specified path.
@@ -66,6 +70,7 @@ func Load(params *LoadParams) (*Config, error) {
 	}
 
 	cfg.Measure = params.Measure
+	cfg.List = params.List
 
 	if params.ExpandOutput != nil {
 		cfg.ExpandOutput = *params.ExpandOutput

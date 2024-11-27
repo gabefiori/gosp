@@ -18,6 +18,7 @@ func Run() error {
 		expandOutput bool
 		measure      bool
 		unique       bool
+		list         bool
 	)
 
 	app := &cli.App{
@@ -53,7 +54,7 @@ func Run() error {
 			&cli.BoolFlag{
 				Name:        "unique",
 				Aliases:     []string{"u"},
-				Usage:       "Display only unique values",
+				Usage:       "Display only unique projects",
 				Value:       false,
 				Destination: &unique,
 			},
@@ -63,6 +64,13 @@ func Run() error {
 				Usage:       "Expand the output",
 				Value:       true,
 				Destination: &expandOutput,
+			},
+			&cli.BoolFlag{
+				Name:        "list",
+				Aliases:     []string{"l"},
+				Usage:       "List projects to stdout",
+				Value:       true,
+				Destination: &list,
 			},
 			&cli.BoolFlag{
 				Name:        "measure",
@@ -77,6 +85,7 @@ func Run() error {
 			params := &config.LoadParams{
 				Path:    path,
 				Measure: measure,
+				List:    list,
 			}
 
 			if ctx.IsSet("expand-output") {

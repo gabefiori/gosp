@@ -111,7 +111,7 @@ Create a configuration file at `~/.config/gosp/config.json`:
 <details>
 <summary>unique (optional, defaults to "false")</summary>
 
-> When set to `true`, the output will only display unique values. Note that enabling this option may slightly impact performance.
+> When set to `true`, the output will only display unique projects. Note that enabling this option may slightly impact performance.
 
 </details>
 

@@ -63,6 +63,32 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
+	// If listing is enabled, print the results to stdout in batches.
+	if cfg.List {
+		batchSize := 50
+		batchCount := 0
+
+		for r := range resultCh {
+			if _, err := buf.WriteString(r + "\n"); err != nil {
+				return err
+			}
+
+			batchCount++
+
+			if batchCount >= batchSize {
+				if _, err := io.Copy(os.Stdout, buf); err != nil {
+					return err
+				}
+
+				buf.Reset()
+				batchCount = 0
+			}
+		}
+
+		_, err = io.Copy(os.Stdout, buf)
+		return err
+	}
+
 	t := selector.TypeFromStr(cfg.Selector)
 	s, err := selector.New(t)
 
