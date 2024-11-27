@@ -126,4 +126,14 @@ Create a configuration file at `~/.config/gosp/config.json`:
 
 </details>
 
-For CLI options, run `gosp --help`.
+## CLI options
+```sh
+--config file, -c file        Load configuration from file (default: "~/.config/gosp/config.json")
+--selector value, --sl value  Selector for displaying projects (available options: 'fzf', 'fzy') (default: "fzf")
+--sort value, -s value        Specify the sort order (available options: 'asc', 'desc')
+--unique, -u                  Display only unique projects (default: false)
+--expand-output, --eo         Expand the output (default: true)
+--list, -l                    List projects to stdout (default: true)
+--measure, -m                 Measure performance (time taken and number of items processed) (default: false)
+--help, -h                    show help
+```
