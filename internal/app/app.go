@@ -59,11 +59,14 @@ func Run(cfg *config.Config) error {
 			return err
 		}
 
-		_, err = io.Copy(os.Stdout, buf)
+		_, err = os.Stdout.Write(buf.Bytes())
 		return err
 	}
 
 	// If listing is enabled, print the results to stdout in batches.
+	//
+	// Using io.Copy is more efficient for larger batches of data, as it minimizes
+	// the number of system calls and leverages internal buffering.
 	if cfg.List {
 		batchSize := 50
 		batchCount := 0
@@ -112,6 +115,6 @@ func Run(cfg *config.Config) error {
 		return err
 	}
 
-	_, err = io.Copy(os.Stdout, buf)
+	_, err = os.Stdout.Write(buf.Bytes())
 	return err
 }
