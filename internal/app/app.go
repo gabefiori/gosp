@@ -35,8 +35,6 @@ func Run(cfg *config.Config) error {
 		Unique:   true,
 	})
 
-	buf := new(bytes.Buffer)
-
 	// If output expansion is not enabled, set the home directory to "~".
 	// This is useful for hiding the user's home directory.
 	if !cfg.ExpandOutput {
@@ -55,11 +53,7 @@ func Run(cfg *config.Config) error {
 		measureEnd := time.Since(measureStart).String()
 		msg := fmt.Sprintf("Took %s (%d projects)", measureEnd, count)
 
-		if _, err := buf.WriteString(msg); err != nil {
-			return err
-		}
-
-		_, err = os.Stdout.Write(buf.Bytes())
+		_, err = os.Stdout.WriteString(msg)
 		return err
 	}
 
@@ -70,6 +64,8 @@ func Run(cfg *config.Config) error {
 	if cfg.List {
 		batchSize := 50
 		batchCount := 0
+
+		buf := new(bytes.Buffer)
 
 		for r := range resultCh {
 			if _, err := buf.WriteString(r + "\n"); err != nil {
@@ -123,10 +119,6 @@ func Run(cfg *config.Config) error {
 	//
 	// The expanded version of the result must be used;
 	// otherwise, it will not be able to be consumed by other programs.
-	if _, err := buf.WriteString(home + result[1:]); err != nil {
-		return err
-	}
-
-	_, err = os.Stdout.Write(buf.Bytes())
+	_, err = os.Stdout.WriteString(home + result[1:])
 	return err
 }
