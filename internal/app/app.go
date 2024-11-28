@@ -101,8 +101,20 @@ func Run(cfg *config.Config) error {
 
 	result, err := s.Run(resultCh)
 
-	// An empty result indicates that the selector was canceled.
-	if err != nil || result == "" {
+	if err != nil {
+		return err
+	}
+
+	// If the selector is canceled, result will be empty.
+	// In this case, we output the current directory.
+	if result == "" {
+		currDir, err := os.Getwd()
+
+		if err != nil {
+			return err
+		}
+
+		_, err = os.Stdout.WriteString(currDir)
 		return err
 	}
 
